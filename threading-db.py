@@ -42,7 +42,7 @@ def create_orders_table():
     conn.commit()
     conn.close()
 
-# Insert functions
+# Insert data functions
 def insert_users():
     users_data = [
         (1, "Alice", "alice@example.com"),
@@ -100,6 +100,27 @@ def insert_orders():
     conn.commit()
     conn.close()
 
+# Clear data from tables before insertion
+def clear_tables():
+    databases = ['users.db', 'products.db', 'orders.db']
+    tables = ['Users', 'Products', 'Orders']
+    for db, table in zip(databases, tables):
+        conn = sqlite3.connect(db)
+        cursor = conn.cursor()
+        cursor.execute(f'DELETE FROM {table}')  # Clear the table
+        conn.commit()
+        conn.close()
+
+# Display results
+def display_all():
+    for db, table_name in [('users.db', 'Users'), ('products.db', 'Products'), ('orders.db', 'Orders')]:
+        conn = sqlite3.connect(db)
+        cursor = conn.cursor()
+        print(f"\n{table_name} Table:")
+        for row in cursor.execute(f'SELECT * FROM {table_name}'):
+            print(row)
+        conn.close()
+
 # Threading setup
 def threaded_inserts():
     threads = []
@@ -113,49 +134,14 @@ def threaded_inserts():
     for thread in threads:
         thread.join()
 
-# Display results
-def display_users():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Users')
-    rows = cursor.fetchall()
-    print("\nUsers Table:")
-    for row in rows:
-        print(row)
-    conn.close()
-
-def display_products():
-    conn = sqlite3.connect('products.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Products')
-    rows = cursor.fetchall()
-    print("\nProducts Table:")
-    for row in rows:
-        print(row)
-    conn.close()
-
-def display_orders():
-    conn = sqlite3.connect('orders.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Orders')
-    rows = cursor.fetchall()
-    print("\nOrders Table:")
-    for row in rows:
-        print(row)
-    conn.close()
-
-def display_all():
-    display_users()
-    display_products()
-    display_orders()
-
-# Main
+# Main execution
 if __name__ == "__main__":
     create_users_table()
     create_products_table()
     create_orders_table()
-    threaded_inserts()
-    print("\nInsertions completed successfully!")
     
-
-    display_all()
+    clear_tables()  # Clear existing data
+    threaded_inserts()  # Perform concurrent insertions
+    
+    print("\nInsertions completed successfully!")
+    display_all()  # Display results from all tables
