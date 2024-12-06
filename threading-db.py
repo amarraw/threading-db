@@ -107,7 +107,7 @@ def clear_tables():
     for db, table in zip(databases, tables):
         conn = sqlite3.connect(db)
         cursor = conn.cursor()
-        cursor.execute(f'DELETE FROM {table}')  # Clear the table
+        cursor.execute(f'DELETE FROM {table}')
         conn.commit()
         conn.close()
 
@@ -140,8 +140,8 @@ if __name__ == "__main__":
     create_products_table()
     create_orders_table()
     
-    clear_tables()  # Clear existing data
-    threaded_inserts()  # Perform concurrent insertions
+    clear_tables() 
+    threaded_inserts() 
     
     print("\nInsertions completed successfully!")
-    display_all()  # Display results from all tables
+    display_all() 
